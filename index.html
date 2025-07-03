@@ -12,6 +12,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        overflow: hidden; /* чтобы ракеты, которые улетели, не вылезали за экран */
       }
       #wrapper {
         display: flex;
@@ -66,15 +67,15 @@
       #resetBtn {
         background-color: transparent;
         color: black;
-        border: black, solid, 2px;
+        border: black solid 2px;
       }
-      #rocket {
-        width: 80px;
+      .rocket {
+        width: 60px;
         height: auto;
         transition: transform 0.3s ease-out, opacity 0.2s ease-out;
-
-        position: relative;
-        top: 250px;
+        position: absolute;
+        top: calc(50% + 150px); /* старт чуть ниже центра */
+        left: calc(50% + 150px); /* справа от панели */
       }
       .fly-away {
         transform: translateY(-1000px) scale(0.7);
@@ -93,7 +94,6 @@
         <button id="resetBtn">Спробовати ще раз</button>
         <p id="result"></p>
       </div>
-      <img id="rocket" src="spaceship.png" alt="Ракета" />
     </div>
 
     <script>
@@ -101,15 +101,9 @@
       const resetBtn = document.getElementById("resetBtn");
       const delayInput = document.getElementById("delay");
       const result = document.getElementById("result");
-      const rocket = document.getElementById("rocket");
-      let timeoutId = null;
 
       startBtn.addEventListener("click", () => {
         const delay = parseInt(delayInput.value);
-
-        // Сбрасываем анимацию и текст
-        rocket.classList.remove("fly-away");
-        result.textContent = "";
 
         if (isNaN(delay) || delay < 0) {
           result.textContent = "Введіть корректне число!";
@@ -118,18 +112,25 @@
 
         result.textContent = `Очікуємо ${delay} мс...`;
 
-        timeoutId = setTimeout(() => {
-          result.textContent = "Готово!";
-          rocket.classList.add("fly-away");
+        // Создаём новую ракету
+        const newRocket = document.createElement("img");
+        newRocket.src = "spaceship.png";
+        newRocket.alt = "Ракета";
+        newRocket.classList.add("rocket");
+        document.body.appendChild(newRocket);
+
+        setTimeout(() => {
+          newRocket.classList.add("fly-away");
         }, delay);
+
+        // Удаляем ракету из DOM после анимации
+        newRocket.addEventListener("transitionend", () => {
+          newRocket.remove();
+          result.textContent = "Готово!";
+        });
       });
 
       resetBtn.addEventListener("click", () => {
-        clearTimeout(timeoutId);
-        timeoutId = null;
-
-        // Сбрасываем ракету и текст
-        rocket.classList.remove("fly-away");
         result.textContent = "Все готово до новому пуску.";
       });
     </script>
