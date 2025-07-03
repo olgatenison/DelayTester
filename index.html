@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Тест задержки с ракетой</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      #wrapper {
+        display: flex;
+        flex-direction: row;
+        gap: 200px;
+        align-items: flex-start;
+      }
+      #controls {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 200px;
+      }
+      #first-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      #delay {
+        padding: 8px;
+        font-size: 16px;
+        width: 180px;
+        margin-bottom: 10px;
+      }
+      #startBtn,
+      #resetBtn {
+        padding: 10px 20px;
+        font-size: 16px;
+        margin-top: 5px;
+        cursor: pointer;
+        width: 200px;
+        margin-bottom: 10px;
+      }
+      #startBtn {
+        background-color: black;
+        color: white;
+      }
+      #startBtn:hover,
+      #startBtn:focus {
+        background-color: #252525;
+        color: #979797;
+      }
+      #resetBtn:hover,
+      #resetBtn:focus {
+        background-color: #ebebeb;
+        color: #606060;
+      }
+      #result {
+        margin-top: 20px;
+        font-size: 18px;
+      }
+      #resetBtn {
+        background-color: transparent;
+        color: black;
+        border: black, solid, 2px;
+      }
+      #rocket {
+        width: 80px;
+        height: auto;
+        transition: transform 0.3s ease-out, opacity 0.2s ease-out;
+
+        position: relative;
+        top: 250px;
+      }
+      .fly-away {
+        transform: translateY(-1000px) scale(0.7);
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="controls">
+        <div id="first-row">
+          <label for="delay">Введіть час затримки (мс):</label>
+          <input type="number" id="delay" placeholder="Например, 1000" />
+        </div>
+        <button id="startBtn">Запуск</button>
+        <button id="resetBtn">Спробовати ще раз</button>
+        <p id="result"></p>
+      </div>
+      <img id="rocket" src="spaceship.png" alt="Ракета" />
+    </div>
+
+    <script>
+      const startBtn = document.getElementById("startBtn");
+      const resetBtn = document.getElementById("resetBtn");
+      const delayInput = document.getElementById("delay");
+      const result = document.getElementById("result");
+      const rocket = document.getElementById("rocket");
+      let timeoutId = null;
+
+      startBtn.addEventListener("click", () => {
+        const delay = parseInt(delayInput.value);
+
+        // Сбрасываем анимацию и текст
+        rocket.classList.remove("fly-away");
+        result.textContent = "";
+
+        if (isNaN(delay) || delay < 0) {
+          result.textContent = "Введіть корректне число!";
+          return;
+        }
+
+        result.textContent = `Очікуємо ${delay} мс...`;
+
+        timeoutId = setTimeout(() => {
+          result.textContent = "Готово!";
+          rocket.classList.add("fly-away");
+        }, delay);
+      });
+
+      resetBtn.addEventListener("click", () => {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+
+        // Сбрасываем ракету и текст
+        rocket.classList.remove("fly-away");
+        result.textContent = "Все готово до новому пуску.";
+      });
+    </script>
+  </body>
+</html>
